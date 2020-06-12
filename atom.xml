@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://chaohuawang.github.io</id>
     <title>博客</title>
-    <updated>2020-06-12T02:48:50.601Z</updated>
+    <updated>2020-06-12T02:53:19.048Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://chaohuawang.github.io"/>
     <link rel="self" href="https://chaohuawang.github.io/atom.xml"/>
@@ -10,6 +10,62 @@
     <logo>https://chaohuawang.github.io/images/avatar.png</logo>
     <icon>https://chaohuawang.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 博客</rights>
+    <entry>
+        <title type="html"><![CDATA[VACUUM命令存在两种形式，VACUUM和VACUUM FULL，它们之间的区别见如下表格：]]></title>
+        <id>https://chaohuawang.github.io/post/vacuum-ming-ling-cun-zai-liang-chong-xing-shi-vacuum-he-vacuum-fullta-men-zhi-jian-de-qu-bie-jian-ru-xia-biao-ge/</id>
+        <link href="https://chaohuawang.github.io/post/vacuum-ming-ling-cun-zai-liang-chong-xing-shi-vacuum-he-vacuum-fullta-men-zhi-jian-de-qu-bie-jian-ru-xia-biao-ge/">
+        </link>
+        <updated>2020-06-12T02:50:18.000Z</updated>
+        <content type="html"><![CDATA[<table>
+<thead>
+<tr>
+<th style="text-align:center">VACUUM</th>
+<th style="text-align:left"><strong>无VACUUM</strong></th>
+<th style="text-align:left"><strong>VACUUM</strong></th>
+<th style="text-align:left"><strong>VACUUM FULL</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">删除大量数据之后</td>
+<td style="text-align:left">只是将删除数据的状态置为已删除，该空间不能记录被重新使用</td>
+<td style="text-align:left">如果删除的记录位于表的末端，其所占用的空间将会被物理释放并归还操作系统。如果不是末端数据，该命令会将指定表或索引中被删除数据所占用空间重新置为可用状态，那么在今后有新数据插入时，将优先使用该空间，直到所有被重用的空间用完时，再考虑使用新增的磁盘页面。</td>
+<td style="text-align:left">不论被删除的数据是否处于数据表的末端，这些数据所占用的空间都将被物理的释放并归还于操作系统。之后再有新数据插入时，将分配新的磁盘页面以供使用</td>
+</tr>
+<tr>
+<td style="text-align:center">执行效率</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">由于只是状态置为操作，因此效率较高。</td>
+<td style="text-align:left">在当前版本的PostgreSQL(v9.1)中，该命令会为指定的表或索引重新生成一个数据文件，并将原有文件中可用的数据导入到新文件中，之后再删除原来的数据文件。因此在导入过程中，要求当前磁盘有更多的空间可用于此操作。由此可见，该命令的执行效率相对较低</td>
+</tr>
+<tr>
+<td style="text-align:center">被删除的数据所占用的物理空间是否被重新规划给操作系统</td>
+<td style="text-align:left">不会</td>
+<td style="text-align:left">不会</td>
+<td style="text-align:left">会</td>
+</tr>
+<tr>
+<td style="text-align:center">在执行VACUUM命令时，是否可以并发执行针对该表的其他操作。</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">由于该操作是共享锁，因此可以与其他操作并行进行。</td>
+<td style="text-align:left">由于该操作需要在指定的表上应用排它锁，因此在执行该操作期间，任何基于该表的操作都将被挂起，知道该操作完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">推荐使用方式</td>
+<td style="text-align:left">在进行数据清空时，可以使用truncate操作，因为该操作将会物理的清空数据表，并将其所占用的空间直接归还于操作系统</td>
+<td style="text-align:left">为了保证数据表的磁盘页面数量能够保持在一个相对稳定值，可以定期执行该操作，如每天或每周中数据操作相对较少的时段。</td>
+<td style="text-align:left">考虑到该操作的开销，以及对其他错误的排斥，推荐的方式是，定期监控数据量变化较大的表，只有确认其磁盘页面占有量接近临界值时，才考虑执行一次该操作。即便如此，也需要注意尽量选择数据操作较少的时段来完成该操作。</td>
+</tr>
+<tr>
+<td style="text-align:center">执行后其它操作的效率</td>
+<td style="text-align:left">对于查询而言，由于存在大量的磁盘页面碎片，因此效率会逐步降低</td>
+<td style="text-align:left">相比于不执行任何VACUUM操作，其效率更高，但是插入的效率会有所降低。</td>
+<td style="text-align:left">在执行完该操作后，所有基于该表的操作效率都会得到极大的提升</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://chaohuawang.github.io/post/hello-gridea/</id>

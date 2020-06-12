@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>VACUUM命令存在两种形式，VACUUM和VACUUM FULL，它们之间的区别见如下表格： | 博客</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://chaohuawang.github.io/favicon.ico?v=1591930375636">
+<link rel="stylesheet" href="https://chaohuawang.github.io/styles/main.css">
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+    <meta name="description" content="
+
+
+VACUUM
+无VACUUM
+VACUUM
+VACUUM FULL
+
+
+
+
+删除大量数据之后
+只是将删除数据的状态置为已删除，该空间不能记录被重新使用
+如果删除的记录位于表的末端，其所占用的空间将会被物理释放并归还操作系统。如果不是末..." />
+    <meta name="keywords" content="" />
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://chaohuawang.github.io">
+        <img src="https://chaohuawang.github.io/images/avatar.png?v=1591930375636" class="site-logo">
+        <h1 class="site-title">博客</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      山外青山楼外楼
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://chaohuawang.github.io/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">VACUUM命令存在两种形式，VACUUM和VACUUM FULL，它们之间的区别见如下表格：</h2>
+            <div class="post-date">2020-06-12</div>
+            
+            <div class="post-content" v-pre>
+              <table>
+<thead>
+<tr>
+<th style="text-align:center">VACUUM</th>
+<th style="text-align:left"><strong>无VACUUM</strong></th>
+<th style="text-align:left"><strong>VACUUM</strong></th>
+<th style="text-align:left"><strong>VACUUM FULL</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">删除大量数据之后</td>
+<td style="text-align:left">只是将删除数据的状态置为已删除，该空间不能记录被重新使用</td>
+<td style="text-align:left">如果删除的记录位于表的末端，其所占用的空间将会被物理释放并归还操作系统。如果不是末端数据，该命令会将指定表或索引中被删除数据所占用空间重新置为可用状态，那么在今后有新数据插入时，将优先使用该空间，直到所有被重用的空间用完时，再考虑使用新增的磁盘页面。</td>
+<td style="text-align:left">不论被删除的数据是否处于数据表的末端，这些数据所占用的空间都将被物理的释放并归还于操作系统。之后再有新数据插入时，将分配新的磁盘页面以供使用</td>
+</tr>
+<tr>
+<td style="text-align:center">执行效率</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">由于只是状态置为操作，因此效率较高。</td>
+<td style="text-align:left">在当前版本的PostgreSQL(v9.1)中，该命令会为指定的表或索引重新生成一个数据文件，并将原有文件中可用的数据导入到新文件中，之后再删除原来的数据文件。因此在导入过程中，要求当前磁盘有更多的空间可用于此操作。由此可见，该命令的执行效率相对较低</td>
+</tr>
+<tr>
+<td style="text-align:center">被删除的数据所占用的物理空间是否被重新规划给操作系统</td>
+<td style="text-align:left">不会</td>
+<td style="text-align:left">不会</td>
+<td style="text-align:left">会</td>
+</tr>
+<tr>
+<td style="text-align:center">在执行VACUUM命令时，是否可以并发执行针对该表的其他操作。</td>
+<td style="text-align:left"></td>
+<td style="text-align:left">由于该操作是共享锁，因此可以与其他操作并行进行。</td>
+<td style="text-align:left">由于该操作需要在指定的表上应用排它锁，因此在执行该操作期间，任何基于该表的操作都将被挂起，知道该操作完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">推荐使用方式</td>
+<td style="text-align:left">在进行数据清空时，可以使用truncate操作，因为该操作将会物理的清空数据表，并将其所占用的空间直接归还于操作系统</td>
+<td style="text-align:left">为了保证数据表的磁盘页面数量能够保持在一个相对稳定值，可以定期执行该操作，如每天或每周中数据操作相对较少的时段。</td>
+<td style="text-align:left">考虑到该操作的开销，以及对其他错误的排斥，推荐的方式是，定期监控数据量变化较大的表，只有确认其磁盘页面占有量接近临界值时，才考虑执行一次该操作。即便如此，也需要注意尽量选择数据操作较少的时段来完成该操作。</td>
+</tr>
+<tr>
+<td style="text-align:center">执行后其它操作的效率</td>
+<td style="text-align:left">对于查询而言，由于存在大量的磁盘页面碎片，因此效率会逐步降低</td>
+<td style="text-align:left">相比于不执行任何VACUUM操作，其效率更高，但是插入的效率会有所降低。</td>
+<td style="text-align:left">在执行完该操作后，所有基于该表的操作效率都会得到极大的提升</td>
+</tr>
+</tbody>
+</table>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://chaohuawang.github.io/post/hello-gridea/">
+                  <h3 class="post-title">
+                    Hello Gridea
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+
+
+  </body>
+</html>
